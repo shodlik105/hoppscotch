@@ -1,4 +1,4 @@
-.env
+# .env — kuzatish uchun yoqildi; push qilishda parollarni tekshiring
 volumes/postgres/
 volumes/hoppscotch/
 volumes/mailcatcher/
