@@ -25,6 +25,7 @@ make services-up   # App, nginx, mailcatcher
 | nginx      | Reverse proxy, 3300 → 80         |
 | mailcatcher| SMTP mock (1080 — web, 1025 — SMTP) |
 | postfix    | O'z SMTP (587, STARTTLS)             |
+| proxyscotch| Interceptor Proxy uchun (/proxy/)    |
 | migrate    | Prisma migrate (bir marta, keyin 0/1) |
 
 ## Fayl tuzilishi
@@ -77,6 +78,10 @@ Batafsil: [AUTH_EMAIL.md](AUTH_EMAIL.md)
 ## O'z SMTP (Postfix)
 
 Postfix ham `make services-up` bilan ishga tushadi. `.env` da `MAILER_SMTP_URL=smtp://postfix:587` qiling. Batafsil: [SMTP.md](SMTP.md)
+
+## Proxy (Interceptor)
+
+"Proxy server may be unresponsive" xatosi bo'lsa — Interceptor ni **Browser** yoki **Agent** ga o'zgartiring. Batafsil: [PROXY.md](PROXY.md)
 
 ## Cheklovlar
 

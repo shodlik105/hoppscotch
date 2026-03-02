@@ -32,6 +32,15 @@ services:
     deploy:
       replicas: 1
 
+  # Proxy (Interceptor "Proxy" rejimi) — CORS va tashqi API so'rovlari uchun
+  # Port 9159. Nginx /proxy/ orqali eksponatsiya qiladi
+  proxyscotch:
+    image: hoppscotch/proxyscotch:v0.1.4
+    environment:
+      PROXYSCOTCH_ALLOWED_ORIGINS: ${PROXYSCOTCH_ALLOWED_ORIGINS:-*}
+    deploy:
+      replicas: 1
+
   # O'z SMTP — Postfix (port 587, STARTTLS)
   # MAILER_SMTP_URL=smtp://postfix:587
   postfix:

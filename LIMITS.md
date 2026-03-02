@@ -41,6 +41,7 @@ Hozirgi deployment dagi limitlar va cheklovlar.
 | nginx | 1 | Yagona instance |
 | postgres | 1 | Yagona DB |
 | mailcatcher | 1 | Lokal SMTP mock |
+| proxyscotch | 1 | Interceptor Proxy (/proxy/) |
 
 **Yuqori yuk:** `services/config.yaml` da `replicas: 2` yoki undan ko'p — horizontal scaling.
 
@@ -86,15 +87,6 @@ Rasmiy limitlar (ilova darajasida):
 
 ---
 
-## Postgres
-
-| Parametr | Qiymat | Tavsif |
-|----------|--------|--------|
-| `max_connections` | 500 | Simultaneous ulanishlar max |
-
-Storage: `volumes/postgres` bind mount hajmiga bog'liq.
-
----
 
 ## Xulosa
 
