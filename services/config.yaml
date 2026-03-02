@@ -31,3 +31,16 @@ services:
         mode: host
     deploy:
       replicas: 1
+
+  # O'z SMTP — Postfix (port 587, STARTTLS)
+  # MAILER_SMTP_URL=smtp://postfix:587
+  postfix:
+    image: boky/postfix:latest
+    environment:
+      ALLOWED_SENDER_DOMAINS: ${ALLOWED_SENDER_DOMAINS:-hoppscotch.local}
+      RELAYHOST: ${RELAYHOST:-}
+      RELAYHOST_USERNAME: ${RELAYHOST_USERNAME:-}
+      RELAYHOST_PASSWORD: ${RELAYHOST_PASSWORD:-}
+      HOSTNAME: postfix
+    deploy:
+      replicas: 1

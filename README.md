@@ -24,6 +24,7 @@ make services-up   # App, nginx, mailcatcher
 | hoppscotch | App (backend + frontend)         |
 | nginx      | Reverse proxy, 3300 → 80         |
 | mailcatcher| SMTP mock (1080 — web, 1025 — SMTP) |
+| postfix    | O'z SMTP (587, STARTTLS)             |
 | migrate    | Prisma migrate (bir marta, keyin 0/1) |
 
 ## Fayl tuzilishi
@@ -72,6 +73,10 @@ Admin: http://localhost:3300/admin → Onboarding → SMTP: `smtp://mailcatcher:
 Magic link: http://localhost:1080 (Mailcatcher web UI)
 
 Batafsil: [AUTH_EMAIL.md](AUTH_EMAIL.md)
+
+## O'z SMTP (Postfix)
+
+Postfix ham `make services-up` bilan ishga tushadi. `.env` da `MAILER_SMTP_URL=smtp://postfix:587` qiling. Batafsil: [SMTP.md](SMTP.md)
 
 ## Cheklovlar
 
