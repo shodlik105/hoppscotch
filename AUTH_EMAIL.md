@@ -6,7 +6,7 @@ Mailcatcher `make services-up` bilan ishga tushadi (1080 — web, 1025 — SMTP)
 
 ## 1. Admin onboarding
 
-**http://localhost:3300/admin** yoki **http://127.0.0.1:3300/admin** oching.
+**http://192.168.0.106:3300/admin** oching.
 
 ### Step 1 — Auth method
 
@@ -29,7 +29,7 @@ Quyidagilarni kiriting:
 
 ## 2. Login (magic link)
 
-1. **http://localhost:3300** oching
+1. **http://192.168.0.106:3300** oching
 2. **Login** → **Continue with Email**
 3. Istalgan email kiriting (masalan: `test@example.com`)
 4. **Send Magic Link** bosing
@@ -40,7 +40,7 @@ Quyidagilarni kiriting:
 
 Mailcatcher haqiqiy pochta yubormaydi. Link lokal qabul qilgichda chiqadi:
 
-👉 **http://localhost:1080**
+👉 **http://192.168.0.106:1080**
 
 1. Shu sahifani oching
 2. Yangi xatni ko‘ring (Magic link)
@@ -52,4 +52,4 @@ Mailcatcher haqiqiy pochta yubormaydi. Link lokal qabul qilgichda chiqadi:
 ## 4. Keyingi loginlar
 
 - Sessiya saqlanadi
-- Chiqib kirsangiz — yana email + magic link (localhost:1080)
+- Chiqib kirsangiz — yana email + magic link (http://192.168.0.106:1080)

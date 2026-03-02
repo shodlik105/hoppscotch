@@ -1,0 +1,6 @@
+.env
+volumes/postgres/
+volumes/hoppscotch/
+volumes/mailcatcher/
+*.log
+.DS_Store

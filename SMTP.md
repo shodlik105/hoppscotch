@@ -37,6 +37,6 @@ Gmail: [App password](https://myaccount.google.com/apppasswords) yarating.
 
 | Variant | MAILER_SMTP_URL | Xususiyat |
 |---------|-----------------|-----------|
-| Mailcatcher | `smtp://mailcatcher:1025` | Lokal, xatlarni 1080 da ko'rish |
+| Mailcatcher | `smtp://mailcatcher:1025` | xatlarni http://192.168.0.106:1080 da ko'rish |
 | Postfix (o'z) | `smtp://postfix:587` | STARTTLS, to'g'ridan-to'g'ri yoki relay |
 | Tashqi (Gmail) | `smtps://user:pass@smtp.gmail.com:465` | MAILER_USE_CUSTOM_CONFIGS=true |

@@ -69,8 +69,8 @@ docker stack rm hoppscotch
 
 ## Auth (EMAIL + magic link)
 
-Admin: http://localhost:3300/admin → Onboarding → SMTP: `smtp://mailcatcher:1025`  
-Magic link: http://localhost:1080 (Mailcatcher web UI)
+Admin: http://192.168.0.106:3300/admin → Onboarding → SMTP: `smtp://mailcatcher:1025`  
+Magic link: http://192.168.0.106:1080 (Mailcatcher web UI)
 
 Batafsil: [AUTH_EMAIL.md](AUTH_EMAIL.md)
 
@@ -81,3 +81,7 @@ Postfix ham `make services-up` bilan ishga tushadi. `.env` da `MAILER_SMTP_URL=s
 ## Cheklovlar
 
 Limitlar, sozlamalar va production tavsiyalari: [LIMITS.md](LIMITS.md)
+
+## Xavfsizlik
+
+Hozirgi holat va tavsiyalar: [SECURITY.md](SECURITY.md)
