@@ -1,0 +1,33 @@
+services:
+  hoppscotch:
+    image: hoppscotch/hoppscotch
+    env_file: ../.env
+    volumes:
+      - ../volumes/hoppscotch:/app/data
+    deploy:
+      replicas: 1
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ../nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - target: 80
+        published: 3300
+        mode: host
+    deploy:
+      replicas: 1
+
+  mailcatcher:
+    image: dockage/mailcatcher:0.9.0
+    volumes:
+      - ../volumes/mailcatcher:/root/.mailcatcher
+    ports:
+      - target: 1080
+        published: 1080
+        mode: host
+      - target: 1025
+        published: 1025
+        mode: host
+    deploy:
+      replicas: 1
