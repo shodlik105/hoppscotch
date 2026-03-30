@@ -1,15 +1,24 @@
-# EMAIL + Mailcatcher — Login sozlash
+# EMAIL + Mailcatcher — Login sozlash (Gateway orqali)
 
-Mailcatcher `make services-up` bilan ishga tushadi (1080 — web, 1025 — SMTP).
+Hoppscotch gateway orqali ishlaydi:
+
+- Hoppscotch: **http://172.16.80.8:7000/hoppscotch/**
+- Admin panel: **http://172.16.80.8:7000/hoppscotch/admin**
+- Mailcatcher (Web UI): **http://172.16.80.8:7000/mailcatcher/**
+
+Mailcatcher container ichida:
+- Web UI: 1080 (ichki)
+- SMTP: 1025 (ichki)
+
+Tashqaridan faqat gateway (7000) ishlatiladi.
 
 ---
 
 ## 1. Admin onboarding
 
-**http://192.168.0.106:3300/admin** oching.
+**http://172.16.80.8:7000/hoppscotch/admin** oching.
 
 ### Step 1 — Auth method
-
 - **EMAIL** ni tanlang
 - **Continue** bosing
 
@@ -17,10 +26,10 @@ Mailcatcher `make services-up` bilan ishga tushadi (1080 — web, 1025 — SMTP)
 
 Quyidagilarni kiriting:
 
-| Maydon         | Qiymat                          |
-|----------------|----------------------------------|
-| **Address From** | `noreply@hoppscotch.local`       |
-| **SMTP URL**     | `smtp://mailcatcher:1025`        |
+| Maydon | Qiymat |
+|--------|--------|
+| **Address From** | `noreply@hoppscotch.local` |
+| **SMTP URL** | `smtp://mailcatcher:1025` |
 | **Use Custom Configs** | Oʻchiring (unchecked) |
 
 **Save Auth Config** bosing.
@@ -29,7 +38,7 @@ Quyidagilarni kiriting:
 
 ## 2. Login (magic link)
 
-1. **http://192.168.0.106:3300** oching
+1. **http://172.16.80.8:7000/hoppscotch/** oching
 2. **Login** → **Continue with Email**
 3. Istalgan email kiriting (masalan: `test@example.com`)
 4. **Send Magic Link** bosing
@@ -38,9 +47,9 @@ Quyidagilarni kiriting:
 
 ## 3. Magic link olish
 
-Mailcatcher haqiqiy pochta yubormaydi. Link lokal qabul qilgichda chiqadi:
+Mailcatcher haqiqiy pochta yubormaydi. Link gateway orqali chiqadi:
 
-👉 **http://192.168.0.106:1080**
+👉 **http://172.16.80.8:7000/mailcatcher/**
 
 1. Shu sahifani oching
 2. Yangi xatni ko‘ring (Magic link)
@@ -52,4 +61,5 @@ Mailcatcher haqiqiy pochta yubormaydi. Link lokal qabul qilgichda chiqadi:
 ## 4. Keyingi loginlar
 
 - Sessiya saqlanadi
-- Chiqib kirsangiz — yana email + magic link (http://192.168.0.106:1080)
+- Chiqib kirsangiz — yana email + magic link  
+  (**http://172.16.80.8:7000/mailcatcher/**)
