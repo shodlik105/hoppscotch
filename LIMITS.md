@@ -20,7 +20,7 @@ Hozirgi deployment dagi limitlar va cheklovlar.
 
 | Sozlama | Qiymat | Tavsif |
 |---------|--------|--------|
-| `WHITELISTED_ORIGINS` | `*` | Barcha originlarga ruxsat — cheklov yo'q |
+| `WHITELISTED_ORIGINS` | `*` | Barcha `Origin` lar — CORS cheklovi yo'q. Tashqi kirishni firewall / gateway allowlist bilan boshqaring. |
 
 ---
 
@@ -50,8 +50,8 @@ Hozirgi deployment dagi limitlar va cheklovlar.
 
 | Cheklov | Tavsif |
 |---------|--------|
-| Haqiqiy email yo'q | Mailcatcher faqat mock — xatlar 192.168.0.106:1080 da saqlanadi |
-| Tarmoqda | Boshqa kompyuterlar http://192.168.0.106:1080 orqali magic link ko'rishi mumkin |
+| Haqiqiy email yo'q | Mailcatcher faqat mock — xatlar Mailcatcher web UI da (host:1080 yoki gateway orqali `/mailcatcher/`) |
+| Tarmoqda | Magic link uchun SMTP xatlar shu Mailcatcher ga tushadi |
 
 **Production:** Haqiqiy SMTP (Gmail, SendGrid, va hokazo) sozlash kerak — `.env` da `MAILER_USE_CUSTOM_CONFIGS=true`, `MAILER_SMTP_URL=smtps://...`.
 

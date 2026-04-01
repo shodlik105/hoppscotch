@@ -1,7 +1,9 @@
 services:
   hoppscotch:
     image: hoppscotch/hoppscotch
-    env_file: ../.env
+    env_file:
+      - ../.env
+      - ../.env.urls
     volumes:
       - ../volumes/hoppscotch:/app/data
     deploy:

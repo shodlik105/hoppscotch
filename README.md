@@ -9,12 +9,16 @@
 
 ```bash
 cp .env.example .env
-# .env ni tahrirlang (parol, URL, secrets)
+# .env: parollar, JWT, va PUBLIC_ORIGIN / PUBLIC_PATH (brauzerdagi manzil)
 
 make postgres-up    # Postgres
 make migrates-up   # Prisma migrate (postgres tayyor boʻlsin)
-make services-up   # App, nginx, mailcatcher
+make services-up   # .env.urls generatsiya + app, nginx, mailcatcher
 ```
+
+**Brauzer manzili:** `PUBLIC_ORIGIN` — foydalanuvchi **qaysi URL dan** ochadi (odatda gateway, masalan `http://192.168.63.218:7000`). Datacenterdagi `172.16.80.8:3300` faqat ichki nginx; unda emas, gateway orqali kirasiz. `PUBLIC_PATH=hoppscotch` → `.../hoppscotch/admin`, `.../hoppscotch/...`. Mailcatcher: `.../mailcatcher/` (shu gateway hostida). `make services-up` `scripts/gen-env-urls.sh` bilan `VITE_*` / `REDIRECT_URL` ni `.env.urls` ga yozadi.
+
+**CORS:** `WHITELISTED_ORIGINS=*` — `Origin` bo‘yicha cheklov yo‘q; tarmoqni o‘zingiz yopasiz.
 
 ## Arxitektura
 
@@ -45,16 +49,20 @@ nginx.conf
 docker stack rm hoppscotch
 ```
 
+## Tarmoq: datacenter + tashqi gateway
+
+| Qatlam | Tavsif |
+|--------|--------|
+| Swarm nginx (DC) | Masalan `172.16.80.8:3300` — **`/hoppscotch/`**, **`/mailcatcher/`** |
+| Gateway | Masalan `192.168.63.218:7000` — brauzer shu yerda; `.env` da **`PUBLIC_ORIGIN=http://192.168.63.218:7000`** |
+
+**`PUBLIC_ORIGIN`** — mijoz `scheme://host:port` (gateway). **Tashqi nginx** `Host`, `X-Forwarded-Host` (`$http_host`), `X-Forwarded-Proto`, `X-Forwarded-Port` uzatishi kerak. Namuna: [docs/gateway-front.conf.example](docs/gateway-front.conf.example).
+
+Subpathni o‘zgartirsangiz (`PUBLIC_PATH`), `nginx.conf` dagi `hoppscotch` location bilan bir xil qiling.
+
 ## VM / tarmoqda (LAN)
 
-Tarmoqda boshqa foydalanuvchilar kirishi uchun `.env` da `localhost` o‘rniga VM IP ni yozing:
-
-- `VITE_BASE_URL`, `VITE_SHORTCODE_BASE_URL`, `VITE_ADMIN_URL` → `http://192.168.0.106:3300` (o‘z IP ingiz)
-- `VITE_BACKEND_GQL_URL`, `VITE_BACKEND_API_URL` → `http://192.168.0.106:3300/backend/...`
-- `VITE_BACKEND_WS_URL` → `ws://192.168.0.106:3300/backend/graphql`
-- `REDIRECT_URL` → `http://192.168.0.106:3300`
-
-`WHITELISTED_ORIGINS=*` bo‘lsa barcha clientlar kirishi mumkin.
+Gateway ishlatmasangiz: `PUBLIC_ORIGIN=http://SERVER:3300`, `PUBLIC_PATH=hoppscotch`, `make services-up`.
 
 ## Parolni oʻzgartirish
 
@@ -68,8 +76,9 @@ docker stack rm hoppscotch
 
 ## Auth (EMAIL + magic link)
 
-Admin: http://localhost:3300/admin → Onboarding → SMTP: `smtp://mailcatcher:1025`  
-Magic link: http://localhost:1080 (Mailcatcher web UI)
+Asosiy ilova: `PUBLIC_ORIGIN` + `/hoppscotch/` (masalan `http://192.168.63.218:7000/hoppscotch/`)  
+Admin: `.../hoppscotch/admin` → Onboarding → SMTP: `smtp://mailcatcher:1025`  
+Mailcatcher: shu gateway da `.../mailcatcher/` (ichki `:1080` ham mavjud)
 
 Batafsil: [AUTH_EMAIL.md](AUTH_EMAIL.md)
 

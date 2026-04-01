@@ -6,7 +6,8 @@ Mailcatcher `make services-up` bilan ishga tushadi (1080 — web, 1025 — SMTP)
 
 ## 1. Admin onboarding
 
-**http://localhost:3300/admin** yoki **http://127.0.0.1:3300/admin** oching.
+**`.env` dagi `PUBLIC_ORIGIN` + `/hoppscotch/admin`** oching (masalan gateway: `http://192.168.63.218:7000/hoppscotch/admin`).  
+To‘g‘ridan-to‘g‘ri DC nginx: `http://SERVER:3300/hoppscotch/admin`.
 
 ### Step 1 — Auth method
 
@@ -29,7 +30,7 @@ Quyidagilarni kiriting:
 
 ## 2. Login (magic link)
 
-1. **http://localhost:3300** oching
+1. Asosiy ilova URL (`PUBLIC_ORIGIN` + `/hoppscotch/`) ni oching
 2. **Login** → **Continue with Email**
 3. Istalgan email kiriting (masalan: `test@example.com`)
 4. **Send Magic Link** bosing
@@ -40,7 +41,8 @@ Quyidagilarni kiriting:
 
 Mailcatcher haqiqiy pochta yubormaydi. Link lokal qabul qilgichda chiqadi:
 
-👉 **http://localhost:1080**
+👉 **Gateway orqali:** `PUBLIC_ORIGIN` + `/mailcatcher/` (masalan `http://192.168.63.218:7000/mailcatcher/`)  
+👉 **Yoki** serverda to‘g‘ridan: `http://SERVER:1080`
 
 1. Shu sahifani oching
 2. Yangi xatni ko‘ring (Magic link)
@@ -52,4 +54,4 @@ Mailcatcher haqiqiy pochta yubormaydi. Link lokal qabul qilgichda chiqadi:
 ## 4. Keyingi loginlar
 
 - Sessiya saqlanadi
-- Chiqib kirsangiz — yana email + magic link (localhost:1080)
+- Chiqib kirsangiz — yana email + magic link (`/mailcatcher/` yoki `:1080`)
