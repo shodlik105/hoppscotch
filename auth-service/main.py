@@ -62,6 +62,11 @@ def set_auth_cookies(response: Response, uid: str):
 # ── Router (full paths) ───────────────────────────────────────────────────────
 router = APIRouter(prefix=BASE_PATH)
 
+@router.get("", include_in_schema=False)
+@router.get("/", include_in_schema=False)
+async def root_redirect():
+    return RedirectResponse(f"{BASE_PATH}/login", status_code=302)
+
 @router.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request, error: str = ""):
     return templates.TemplateResponse("login.html", {
