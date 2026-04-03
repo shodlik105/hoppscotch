@@ -4,13 +4,14 @@ TAG        = password
 FULL_IMAGE = $(IMAGE):$(TAG)
 COMPOSE    = services/config.yaml
 
-.PHONY: build services-up services-down migrate logs ps help
+.PHONY: build build-auth build-hoppscotch services-up services-down migrate logs ps restart restart-app restart-nginx restart-auth help
 
 ## ── Build ─────────────────────────────────────────────────────────────────
 build: build-auth
 
 build-auth:
 	docker build -t hoppscotch-auth:local auth-service/
+	docker service update --force --image hoppscotch-auth:local $(STACK)_auth-service 2>/dev/null || true
 
 build-hoppscotch:
 	DOCKER_BUILDKIT=0 docker build \
@@ -61,6 +62,9 @@ restart-app:
 
 restart-nginx:
 	docker service update --force $(STACK)_nginx
+
+restart-auth:
+	docker service update --force --image hoppscotch-auth:local $(STACK)_auth-service
 
 ## ── Help ──────────────────────────────────────────────────────────────────
 help:
