@@ -1,7 +1,6 @@
 """
 Hoppscotch uchun email+parol autentifikatsiya mikroservisi.
-Hoppscotch ni o'zgartirmaydi — uning JWT formatida token yaratadi.
-User.passwordHash fieldini ishlatadi (official Hoppscotch sxemasi bilan mos).
+Full path routing — nginx prefix stripping yo'q.
 """
 
 import os
@@ -11,7 +10,7 @@ import uuid
 import bcrypt
 import jwt
 import asyncpg
-from fastapi import FastAPI, Form, Request, Response
+from fastapi import FastAPI, APIRouter, Form, Request, Response
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
@@ -26,6 +25,8 @@ SECURE_COOKIES = os.environ.get("ALLOW_SECURE_COOKIES", "false").lower() == "tru
 APP_PREFIX     = os.environ.get("PUBLIC_PATH", "hoppscotch")
 ACCESS_EXPIRY  = int(os.environ.get("ACCESS_TOKEN_EXPIRY_HOURS", "24"))
 REFRESH_EXPIRY = int(os.environ.get("REFRESH_TOKEN_EXPIRY_DAYS", "7"))
+
+BASE_PATH = f"/{APP_PREFIX}/password-auth"
 
 # ── DB ────────────────────────────────────────────────────────────────────────
 pool: asyncpg.Pool = None
@@ -58,8 +59,10 @@ def set_auth_cookies(response: Response, uid: str):
     response.set_cookie("access_token",  access,  **opts)
     response.set_cookie("refresh_token", refresh, **opts)
 
-# ── Routes ────────────────────────────────────────────────────────────────────
-@app.get("/login", response_class=HTMLResponse)
+# ── Router (full paths) ───────────────────────────────────────────────────────
+router = APIRouter(prefix=BASE_PATH)
+
+@router.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request, error: str = ""):
     return templates.TemplateResponse("login.html", {
         "request": request,
@@ -68,7 +71,7 @@ async def login_page(request: Request, error: str = ""):
         "mode": "signin",
     })
 
-@app.get("/signup", response_class=HTMLResponse)
+@router.get("/signup", response_class=HTMLResponse)
 async def signup_page(request: Request, error: str = ""):
     return templates.TemplateResponse("login.html", {
         "request": request,
@@ -77,7 +80,7 @@ async def signup_page(request: Request, error: str = ""):
         "mode": "signup",
     })
 
-@app.post("/login")
+@router.post("/login")
 async def login(
     request: Request,
     email: str = Form(...),
@@ -91,13 +94,13 @@ async def login(
 
     if not row or not row["passwordHash"]:
         return RedirectResponse(
-            f"/{APP_PREFIX}/password-auth/login?error=Email+yoki+parol+noto%27g%27ri",
+            f"{BASE_PATH}/login?error=Email+yoki+parol+noto%27g%27ri",
             status_code=303,
         )
 
     if not bcrypt.checkpw(password.encode(), row["passwordHash"].encode()):
         return RedirectResponse(
-            f"/{APP_PREFIX}/password-auth/login?error=Email+yoki+parol+noto%27g%27ri",
+            f"{BASE_PATH}/login?error=Email+yoki+parol+noto%27g%27ri",
             status_code=303,
         )
 
@@ -105,7 +108,7 @@ async def login(
     set_auth_cookies(response, row["uid"])
     return response
 
-@app.post("/signup")
+@router.post("/signup")
 async def signup(
     request: Request,
     email: str = Form(...),
@@ -114,13 +117,13 @@ async def signup(
 ):
     if password != confirm_password:
         return RedirectResponse(
-            f"/{APP_PREFIX}/password-auth/signup?error=Parollar+mos+kelmadi",
+            f"{BASE_PATH}/signup?error=Parollar+mos+kelmadi",
             status_code=303,
         )
 
     if len(password) < 8:
         return RedirectResponse(
-            f"/{APP_PREFIX}/password-auth/signup?error=Parol+kamida+8+ta+belgi",
+            f"{BASE_PATH}/signup?error=Parol+kamida+8+ta+belgi",
             status_code=303,
         )
 
@@ -135,10 +138,9 @@ async def signup(
         if existing:
             if existing["passwordHash"]:
                 return RedirectResponse(
-                    f"/{APP_PREFIX}/password-auth/signup?error=Bu+email+allaqachon+ro%27yxatdan+o%27tgan",
+                    f"{BASE_PATH}/signup?error=Bu+email+allaqachon+ro%27yxatdan+o%27tgan",
                     status_code=303,
                 )
-            # Foydalanuvchi bor, parol qo'shamiz
             uid = existing["uid"]
             await conn.execute(
                 'UPDATE "User" SET "passwordHash" = $1 WHERE uid = $2',
@@ -156,6 +158,8 @@ async def signup(
     set_auth_cookies(response, uid)
     return response
 
-@app.get("/health")
+@router.get("/health")
 async def health():
     return {"status": "ok"}
+
+app.include_router(router)
