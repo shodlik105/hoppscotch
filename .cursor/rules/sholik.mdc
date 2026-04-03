@@ -1,0 +1,37 @@
+---
+description: Hoppscotch Swarm + agrozamin.uz /api-docs/ deploy va nginx tuzatishlari uchun prompt
+alwaysApply: false
+---
+
+# Hoppscotch (AgroZamin) — agent uchun qisqa ko‘rsatma
+
+Buni vazifa berishda yoki tahlil qilishda **to‘liq kontekst** sifatida ishlating.
+
+## Arxitektura
+
+- **Datacenter:** Docker Swarm, ichki nginx **host:3300** (masalan `172.16.80.8:3300`).
+- **Tashqi domen:** `https://agrozamin.uz` — korporativ sayt **ildizda**; Hoppscotch faqat **`/api-docs/`** ostida.
+- **Subpath:** `PUBLIC_PATH=api-docs` → asosiy ilova `/api-docs/`, Mailcatcher `/api-docs/mailcatcher/` (ichki nginx + basic auth).
+- **`.env`:** `PUBLIC_ORIGIN=https://agrozamin.uz`, `PUBLIC_PATH=api-docs`. `scripts/gen-env-urls.sh` → `.env.urls` (`VITE_*`, `NUXT_APP_BASE_URL`, `REDIRECT_URL`). **`make services-up`** avval `.env.urls` yaratadi.
+
+## Nginx (ichki `nginx.conf`) — muhim
+
+1. **`proxy_pass` da o‘zgaruvchi ishlatma** (`$backend_upstream` va hokazo): `rewrite ... break` dan keyin nginx ba’zan **asl** `request_uri` ni yuboradi → `POST /api-docs/backend/graphql` upstreamda **405 (Allow: GET, HEAD)**. Har doim aniq yozing: `proxy_pass http://hoppscotch:80;`, `http://mailcatcher:1080`, `http://auth-service:8000`.
+2. **`X-Forwarded-Host` / `Proto` / `Port`** tashqi gateway uzatishi kerak (ichki `$effective_*` orqali backend ga).
+3. **Admin SPA:** rasmiy `hoppscotch/hoppscotch` imijida admin **Vite `--base /admin/`** bilan yig‘ilgan. Brauzer yo‘li **`/api-docs/admin/`** bo‘lsa, Vue Router ko‘pincha **404** beradi (router bazasi build vaqtida qotirilgan). Yechimlar:
+   - **A)** Foydalanuvchi va `VITE_ADMIN_URL` uchun **`https://agrozamin.uz/admin/`** — tashqi gatewayda `location ^~ /admin/` → xuddi shu 3300 upstream; ichki `location /admin` mavjud.
+   - **B)** Admin ham **`/api-docs/admin/`** da bo‘lishi shart bo‘lsa — **o‘z Docker image** qurish: `src/prod.Dockerfile` da `sh_admin_builder` uchun `pnpm run build ... --base /api-docs/admin/` (build-arg), keyin registry va `services/config.yaml` da shu image.
+4. **Ildizdagi** tashqi nginxda **`location /assets/`** va **`/images/`** qo‘ymang — statiklar `/api-docs/assets/` ostida; ildizdagi `/assets/` Hoppscotchni noto‘g‘ri ochishiga olib keladi.
+5. **`location = / { return 302 /api-docs/; }`** tashqi domen uchun **shart emas** agar ildizda boshqa sayt bo‘lsa (AgroZamin bosh sahifasi).
+
+## Tashqi gateway (namuna)
+
+Faqat **`location ^~ /api-docs/`** → `http://UPSTREAM:3300`, `proxy_set_header Host $http_host`, `X-Forwarded-*`, `X-Forwarded-Port 443`. `proxy_pass` oxirida **qo‘shimcha `/` yo‘q**.
+
+## Boshqa
+
+- **CORS:** `WHITELISTED_ORIGINS=*` (xavfsizlikni tarmoq bilan).
+- **Makefile:** `STACK=hoppscotch`, `services-up` — `docker stack deploy --with-registry-auth`.
+- **Parolli login:** `auth-service`, yo‘l `/{PUBLIC_PATH}/password-auth` (masalan `/api-docs/password-auth`).
+
+Agar foydalanuvchi “admin `/api-docs/admin/` da ochilsin” desa, avval **A vs B** ni aniqlang; rasmiy imagesiz B **mumkin emas**.
