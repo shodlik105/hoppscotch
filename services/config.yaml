@@ -19,17 +19,6 @@ services:
       restart_policy:
         condition: on-failure
 
-  # ── DB Migration (runs once on deploy) ───────────────────────────────────
-  migrate:
-    image: hoppscotch/hoppscotch
-    env_file:
-      - ../.env
-    command: sh -c "pnpm exec prisma migrate deploy"
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: none
-
   # ── Python Password Auth mikroservisi ─────────────────────────────────────
   auth-service:
     image: hoppscotch-auth:local
