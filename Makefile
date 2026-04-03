@@ -11,7 +11,6 @@ build: build-auth
 
 build-auth:
 	docker build -t hoppscotch-auth:local auth-service/
-	docker service update --force --image hoppscotch-auth:local $(STACK)_auth-service 2>/dev/null || true
 
 build-hoppscotch:
 	DOCKER_BUILDKIT=0 docker build \
