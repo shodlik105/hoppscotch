@@ -417,11 +417,6 @@ export class AuthService {
       }
     }
 
-    // Check if signup is disabled
-    const isSignUpEnabled = await this.infraConfigService.getInfraConfigValue(
-      'ALLOW_SIGN_IN_WITH_PASSWORD' as any,
-    ).catch(() => 'true');
-
     const hashedPassword = await bcrypt.hash(password, 10);
 
     let user: AuthUser;
