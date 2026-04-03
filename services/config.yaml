@@ -1,6 +1,6 @@
 services:
   hoppscotch:
-    image: hoppscotch/hoppscotch
+    image: hoppscotch/hoppscotch:password
     env_file:
       - ../.env
       - ../.env.urls
