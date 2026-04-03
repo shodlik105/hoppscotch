@@ -22,6 +22,9 @@ build-hoppscotch:
 services-up: .env.urls
 	set -a && . ./.env && set +a && \
 	docker stack deploy -c $(COMPOSE) $(STACK)
+	@sleep 3
+	@docker service update --force --image hoppscotch-auth:local $(STACK)_auth-service > /dev/null 2>&1 || true
+	@echo "auth-service: yangilandi"
 
 services-down:
 	docker stack rm $(STACK)
