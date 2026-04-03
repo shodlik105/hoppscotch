@@ -1,12 +1,10 @@
 STACK      = hoppscotch
-IMAGE      = hoppscotch/hoppscotch
-TAG        = password
-FULL_IMAGE = $(IMAGE):$(TAG)
 COMPOSE    = services/config.yaml
 
 AUTH_IMAGE = gitlab.agrozamin.uz:5050/hoppscotch/auth-service:latest
+HOPP_IMAGE = gitlab.agrozamin.uz:5050/hoppscotch/hoppscotch:latest
 
-.PHONY: build build-auth build-hoppscotch services-up services-down migrate logs ps restart restart-app restart-nginx restart-auth help
+.PHONY: build build-auth build-hoppscotch services-up services-down migrate logs ps restart restart-app restart-nginx restart-auth restart-hopp help
 
 ## ── Build ─────────────────────────────────────────────────────────────────
 build: build-auth
@@ -19,7 +17,8 @@ build-hoppscotch:
 	DOCKER_BUILDKIT=0 docker build \
 		--build-arg TARGETARCH=$(shell uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/') \
 		-f src/prod.Dockerfile --target aio \
-		-t $(FULL_IMAGE) src/
+		-t $(HOPP_IMAGE) src/
+	docker push $(HOPP_IMAGE)
 
 ## ── Deploy ────────────────────────────────────────────────────────────────
 services-up: .env.urls
@@ -67,6 +66,9 @@ restart-nginx:
 
 restart-auth:
 	docker service update --force --image $(AUTH_IMAGE) $(STACK)_auth-service
+
+restart-hopp:
+	docker service update --force --image $(HOPP_IMAGE) $(STACK)_hoppscotch
 
 ## ── Help ──────────────────────────────────────────────────────────────────
 help:

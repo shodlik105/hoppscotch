@@ -82,10 +82,7 @@ export class AuthService {
     try {
       const tokens = await this.prisma.verificationToken.findUniqueOrThrow({
         where: {
-          passwordless_deviceIdentifier_tokens: {
-            deviceIdentifier: magicLinkTokens.deviceIdentifier,
-            token: magicLinkTokens.token,
-          },
+          token: magicLinkTokens.token,
         },
       });
       return O.some(tokens);
@@ -163,10 +160,7 @@ export class AuthService {
       const deletedPasswordlessToken =
         await this.prisma.verificationToken.delete({
           where: {
-            passwordless_deviceIdentifier_tokens: {
-              deviceIdentifier: passwordlessTokens.deviceIdentifier,
-              token: passwordlessTokens.token,
-            },
+            token: passwordlessTokens.token,
           },
         });
       return E.right(deletedPasswordlessToken);
