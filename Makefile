@@ -24,7 +24,7 @@ build-hoppscotch:
 ## ── Deploy ────────────────────────────────────────────────────────────────
 services-up: .env.urls
 	set -a && . ./.env && set +a && \
-	docker stack deploy -c $(COMPOSE) $(STACK)
+	docker stack deploy --with-registry-auth -c $(COMPOSE) $(STACK)
 
 services-down:
 	docker stack rm $(STACK)
