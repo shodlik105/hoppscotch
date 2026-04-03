@@ -4,13 +4,16 @@ TAG        = password
 FULL_IMAGE = $(IMAGE):$(TAG)
 COMPOSE    = services/config.yaml
 
+AUTH_IMAGE = gitlab.agrozamin.uz:5050/hoppscotch/auth-service:latest
+
 .PHONY: build build-auth build-hoppscotch services-up services-down migrate logs ps restart restart-app restart-nginx restart-auth help
 
 ## ── Build ─────────────────────────────────────────────────────────────────
 build: build-auth
 
 build-auth:
-	docker build -t hoppscotch-auth:local auth-service/
+	docker build -t $(AUTH_IMAGE) auth-service/
+	docker push $(AUTH_IMAGE)
 
 build-hoppscotch:
 	DOCKER_BUILDKIT=0 docker build \
@@ -22,9 +25,6 @@ build-hoppscotch:
 services-up: .env.urls
 	set -a && . ./.env && set +a && \
 	docker stack deploy -c $(COMPOSE) $(STACK)
-	@sleep 3
-	@docker service update --force --image hoppscotch-auth:local $(STACK)_auth-service > /dev/null 2>&1 || true
-	@echo "auth-service: yangilandi"
 
 services-down:
 	docker stack rm $(STACK)
@@ -66,7 +66,7 @@ restart-nginx:
 	docker service update --force $(STACK)_nginx
 
 restart-auth:
-	docker service update --force --image hoppscotch-auth:local $(STACK)_auth-service
+	docker service update --force --image $(AUTH_IMAGE) $(STACK)_auth-service
 
 ## ── Help ──────────────────────────────────────────────────────────────────
 help:

@@ -21,7 +21,7 @@ services:
 
   # ── Python Password Auth mikroservisi ─────────────────────────────────────
   auth-service:
-    image: hoppscotch-auth:local
+    image: gitlab.agrozamin.uz:5050/hoppscotch/auth-service:latest
     env_file:
       - ../.env
       - ../.env.urls
