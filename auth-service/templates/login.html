@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% if mode == 'signup' %}Ro'yxatdan o'tish{% else %}Kirish{% endif %} — Hoppscotch</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0f1117;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: #e2e8f0;
+    }
+    .card {
+      background: #1a1d27;
+      border: 1px solid #2d3148;
+      border-radius: 12px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 400px;
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .logo svg { width: 40px; height: 40px; }
+    h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #f1f5f9;
+    }
+    .error {
+      background: #2d1515;
+      border: 1px solid #f87171;
+      color: #f87171;
+      padding: .75rem 1rem;
+      border-radius: 8px;
+      font-size: .875rem;
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      font-size: .875rem;
+      color: #94a3b8;
+      margin-bottom: .35rem;
+    }
+    input {
+      width: 100%;
+      background: #0f1117;
+      border: 1px solid #2d3148;
+      border-radius: 8px;
+      padding: .65rem .9rem;
+      color: #f1f5f9;
+      font-size: .95rem;
+      outline: none;
+      transition: border-color .2s;
+      margin-bottom: 1rem;
+    }
+    input:focus { border-color: #6366f1; }
+    button[type=submit] {
+      width: 100%;
+      background: #6366f1;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: .75rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s;
+      margin-top: .25rem;
+    }
+    button[type=submit]:hover { background: #4f46e5; }
+    .switch {
+      text-align: center;
+      margin-top: 1.25rem;
+      font-size: .875rem;
+      color: #64748b;
+    }
+    .switch a {
+      color: #818cf8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .switch a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="256" cy="256" r="256" fill="#6366f1"/>
+        <path d="M160 200h192M160 256h192M160 312h128" stroke="#fff" stroke-width="32" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <h1>{% if mode == 'signup' %}Hoppscotch ga qo'shilish{% else %}Hoppscotch ga kirish{% endif %}</h1>
+
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
+
+    {% if mode == 'signup' %}
+    <form method="post" action="/{{ prefix }}/password-auth/signup">
+      <label>Email</label>
+      <input type="email" name="email" required autofocus placeholder="siz@misol.com">
+
+      <label>Parol</label>
+      <input type="password" name="password" required placeholder="Kamida 8 ta belgi" minlength="8">
+
+      <label>Parolni tasdiqlang</label>
+      <input type="password" name="confirm_password" required placeholder="Parolni qayta kiriting">
+
+      <button type="submit">Ro'yxatdan o'tish</button>
+    </form>
+    <div class="switch">
+      Allaqachon hisobingiz bormi?
+      <a href="/{{ prefix }}/password-auth/login">Kirish</a>
+    </div>
+
+    {% else %}
+    <form method="post" action="/{{ prefix }}/password-auth/login">
+      <label>Email</label>
+      <input type="email" name="email" required autofocus placeholder="siz@misol.com">
+
+      <label>Parol</label>
+      <input type="password" name="password" required placeholder="Parolingiz">
+
+      <button type="submit">Kirish</button>
+    </form>
+    <div class="switch">
+      Hisobingiz yo'qmi?
+      <a href="/{{ prefix }}/password-auth/signup">Ro'yxatdan o'ting</a>
+    </div>
+    {% endif %}
+  </div>
+</body>
+</html>

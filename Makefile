@@ -7,7 +7,12 @@ COMPOSE    = services/config.yaml
 .PHONY: build services-up services-down migrate logs ps help
 
 ## ── Build ─────────────────────────────────────────────────────────────────
-build:
+build: build-auth
+
+build-auth:
+	docker build -t hoppscotch-auth:local auth-service/
+
+build-hoppscotch:
 	DOCKER_BUILDKIT=0 docker build \
 		--build-arg TARGETARCH=$(shell uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/') \
 		-f src/prod.Dockerfile --target aio \
