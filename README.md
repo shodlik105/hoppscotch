@@ -56,7 +56,7 @@ docker stack rm hoppscotch
 | Swarm nginx (ichki) | Masalan `:3300` — **`/api-docs/`**, **`/api-docs/mailcatcher/`** |
 | Tashqi domen | Masalan `https://agrozamin.uz` — `.env` da **`PUBLIC_ORIGIN`** shu bo‘lsin |
 
-**Tashqi nginx** `Host`, `X-Forwarded-Host` (`$http_host`), `X-Forwarded-Proto`, `X-Forwarded-Port` uzatishi kerak. Namuna: [docs/gateway-front.conf.example](docs/gateway-front.conf.example).
+**Tashqi nginx** `Host`, `X-Forwarded-Host` (`$http_host`), `X-Forwarded-Proto`, `X-Forwarded-Port` uzatishi kerak. **Ildizda** `location /assets/` va `/images/` **qo‘ymang** — ular Hoppscotchni ildizda ochilishiga olib keladi; statiklar `/api-docs/assets/` va `/api-docs/images/` da. **`location = / { return 302 ... /api-docs/; }`** faqat ildizda boshqa sahifa bo‘lmasa qo‘llanadi; oddiy korporativ saytda bu redirect **noto‘g‘ri**. Namuna: [docs/gateway-front.conf.example](docs/gateway-front.conf.example).
 
 Subpathni o‘zgartirsangiz (`PUBLIC_PATH`), `nginx.conf` dagi `api-docs` location bloklari bilan bir xil qiling.
 
