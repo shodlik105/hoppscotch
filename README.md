@@ -16,7 +16,7 @@ make migrates-up   # Prisma migrate (postgres tayyor boʻlsin)
 make services-up   # .env.urls generatsiya + app, nginx, mailcatcher
 ```
 
-**Brauzer manzili:** `PUBLIC_ORIGIN` — foydalanuvchi **qaysi URL dan** ochadi (odatda gateway, masalan `http://192.168.63.218:7000`). Datacenterdagi `172.16.80.8:3300` faqat ichki nginx; unda emas, gateway orqali kirasiz. `PUBLIC_PATH=hoppscotch` → `.../hoppscotch/admin`, `.../hoppscotch/...`. Mailcatcher: `.../mailcatcher/` (shu gateway hostida). `make services-up` `scripts/gen-env-urls.sh` bilan `VITE_*` / `REDIRECT_URL` ni `.env.urls` ga yozadi.
+**Brauzer manzili:** `PUBLIC_ORIGIN` — mijoz ko‘radigan manzil (masalan `https://agrozamin.uz`). `PUBLIC_PATH=api-docs` → asosiy ilova **`/api-docs/`**, admin **`/api-docs/admin/`**, Mailcatcher **`/api-docs/mailcatcher/`** (basic auth). `make services-up` avval `scripts/gen-env-urls.sh` bilan `.env.urls` ni yangilaydi.
 
 **CORS:** `WHITELISTED_ORIGINS=*` — `Origin` bo‘yicha cheklov yo‘q; tarmoqni o‘zingiz yopasiz.
 
@@ -53,16 +53,16 @@ docker stack rm hoppscotch
 
 | Qatlam | Tavsif |
 |--------|--------|
-| Swarm nginx (DC) | Masalan `172.16.80.8:3300` — **`/hoppscotch/`**, **`/mailcatcher/`** |
-| Gateway | Masalan `192.168.63.218:7000` — brauzer shu yerda; `.env` da **`PUBLIC_ORIGIN=http://192.168.63.218:7000`** |
+| Swarm nginx (ichki) | Masalan `:3300` — **`/api-docs/`**, **`/api-docs/mailcatcher/`** |
+| Tashqi domen | Masalan `https://agrozamin.uz` — `.env` da **`PUBLIC_ORIGIN`** shu bo‘lsin |
 
-**`PUBLIC_ORIGIN`** — mijoz `scheme://host:port` (gateway). **Tashqi nginx** `Host`, `X-Forwarded-Host` (`$http_host`), `X-Forwarded-Proto`, `X-Forwarded-Port` uzatishi kerak. Namuna: [docs/gateway-front.conf.example](docs/gateway-front.conf.example).
+**Tashqi nginx** `Host`, `X-Forwarded-Host` (`$http_host`), `X-Forwarded-Proto`, `X-Forwarded-Port` uzatishi kerak. Namuna: [docs/gateway-front.conf.example](docs/gateway-front.conf.example).
 
-Subpathni o‘zgartirsangiz (`PUBLIC_PATH`), `nginx.conf` dagi `hoppscotch` location bilan bir xil qiling.
+Subpathni o‘zgartirsangiz (`PUBLIC_PATH`), `nginx.conf` dagi `api-docs` location bloklari bilan bir xil qiling.
 
 ## VM / tarmoqda (LAN)
 
-Gateway ishlatmasangiz: `PUBLIC_ORIGIN=http://SERVER:3300`, `PUBLIC_PATH=hoppscotch`, `make services-up`.
+Masalan: `PUBLIC_ORIGIN=http://SERVER:3300`, `PUBLIC_PATH=api-docs`, `make services-up`.
 
 ## Parolni oʻzgartirish
 
@@ -76,9 +76,9 @@ docker stack rm hoppscotch
 
 ## Auth (EMAIL + magic link)
 
-Asosiy ilova: `PUBLIC_ORIGIN` + `/hoppscotch/` (masalan `http://192.168.63.218:7000/hoppscotch/`)  
-Admin: `.../hoppscotch/admin` → Onboarding → SMTP: `smtp://mailcatcher:1025`  
-Mailcatcher: shu gateway da `.../mailcatcher/` (ichki `:1080` ham mavjud)
+Asosiy ilova: `PUBLIC_ORIGIN` + `/api-docs/` (masalan `https://agrozamin.uz/api-docs/`)  
+Admin: `.../api-docs/admin/` → Onboarding → SMTP: `smtp://mailcatcher:1025`  
+Mailcatcher: `.../api-docs/mailcatcher/` (ichki `:1080` ham mavjud)
 
 Batafsil: [AUTH_EMAIL.md](AUTH_EMAIL.md)
 

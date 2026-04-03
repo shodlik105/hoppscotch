@@ -32,7 +32,7 @@ services:
 
   # ── Hoppscotch AIO ───────────────────────────────────────────────────────
   hoppscotch:
-    image: gitlab.agrozamin.uz:5050/hoppscotch/hoppscotch:latest
+    image: hoppscotch/hoppscotch:latest
     env_file:
       - ../.env
       - ../.env.urls

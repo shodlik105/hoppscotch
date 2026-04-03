@@ -16,14 +16,16 @@ read_env_val() {
   local line
   line="$(grep -E "^${key}=" .env | tail -n1 || true)"
   [[ -n "$line" ]] || return 1
-  printf '%s' "${line#*=}"
+  val="${line#*=}"
+  val="${val%$'\r'}"
+  printf '%s' "$val"
 }
 
 ORIGIN="$(read_env_val PUBLIC_ORIGIN)" || ORIGIN=""
 PATH_SEG="$(read_env_val PUBLIC_PATH)" || PATH_SEG=""
 
 if [[ -z "$ORIGIN" || -z "$PATH_SEG" ]]; then
-  echo "gen-env-urls: .env da PUBLIC_ORIGIN va PUBLIC_PATH (masalan hoppscotch) bo'sh bo'lmasligi kerak." >&2
+  echo "gen-env-urls: .env da PUBLIC_ORIGIN va PUBLIC_PATH (masalan api-docs) bo'sh bo'lmasligi kerak." >&2
   exit 1
 fi
 

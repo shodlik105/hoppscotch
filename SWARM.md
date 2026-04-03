@@ -1,9 +1,7 @@
 # Swarm — tezkor buyruqlar
 
 ```bash
-make postgres-up
-make migrates-up
-make services-up
+make services-up   # .env.urls + stack deploy (postgres ham shu compose da)
 ```
 
 Oʻchirish: `docker stack rm hoppscotch`

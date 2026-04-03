@@ -1,11 +1,11 @@
-# Tashqi nginx (gateway, masalan listen 7000)
-# Upstream: datacenterdagi Swarm nginx (172.16.80.8:3300 yoki DNS).
+# Tashqi nginx (gateway, HTTPS yoki boshqa port)
+# Upstream: ichki Swarm nginx (:3300 yoki sizning port).
 #
-# Brauzer: http://192.168.63.218:7000/hoppscotch/ ... va /mailcatcher/
-# MUHIM: X-Forwarded-* — Host :7000 bilan backend ga yetishi kerak.
+# Brauzer: https://agrozamin.uz/api-docs/ ... /api-docs/admin/ ... /api-docs/mailcatcher/
+# MUHIM: X-Forwarded-* — to'liq Host (va port kerak bo'lsa) backend ga yetishi kerak.
 
-#     location ^~ /hoppscotch/ {
-#         proxy_pass http://172.16.80.8:3300;
+#     location ^~ /api-docs/ {
+#         proxy_pass http://UPSTREAM_IP_YOKI_DNS:3300;
 #         proxy_http_version 1.1;
 #         proxy_set_header Host $http_host;
 #         proxy_set_header X-Real-IP $remote_addr;
@@ -17,9 +17,4 @@
 #         proxy_set_header Connection $upgrade;
 #         proxy_read_timeout 600s;
 #         proxy_send_timeout 600s;
-#     }
-#
-#     location ^~ /mailcatcher/ {
-#         proxy_pass http://172.16.80.8:3300;
-#         ... xuddi shu sarlavhalar ...
 #     }

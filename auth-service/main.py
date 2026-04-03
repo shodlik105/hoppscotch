@@ -22,7 +22,7 @@ DATABASE_URL   = os.environ["DATABASE_URL"]
 JWT_SECRET     = os.environ["JWT_SECRET"]
 VITE_BASE_URL  = os.environ.get("VITE_BASE_URL", "")
 SECURE_COOKIES = os.environ.get("ALLOW_SECURE_COOKIES", "false").lower() == "true"
-APP_PREFIX     = os.environ.get("PUBLIC_PATH", "hoppscotch")
+APP_PREFIX     = os.environ.get("PUBLIC_PATH", "api-docs")
 ACCESS_EXPIRY  = int(os.environ.get("ACCESS_TOKEN_EXPIRY_HOURS", "24"))
 REFRESH_EXPIRY = int(os.environ.get("REFRESH_TOKEN_EXPIRY_DAYS", "7"))
 
