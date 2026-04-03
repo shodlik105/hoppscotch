@@ -1,4 +1,36 @@
 services:
+
+  # ── PostgreSQL ────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-hoppscotch}
+    volumes:
+      - ../volumes/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  # ── DB Migration (runs once on deploy) ───────────────────────────────────
+  migrate:
+    image: hoppscotch/hoppscotch:password
+    env_file:
+      - ../.env
+    command: sh -c "pnpm exec prisma migrate deploy"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: none
+
+  # ── Hoppscotch AIO ───────────────────────────────────────────────────────
   hoppscotch:
     image: hoppscotch/hoppscotch:password
     env_file:
@@ -8,7 +40,10 @@ services:
       - ../volumes/hoppscotch:/app/data
     deploy:
       replicas: 1
+      restart_policy:
+        condition: on-failure
 
+  # ── Nginx (internal reverse proxy, port 3300) ─────────────────────────────
   nginx:
     image: nginx:alpine
     volumes:
@@ -19,7 +54,10 @@ services:
         mode: host
     deploy:
       replicas: 1
+      restart_policy:
+        condition: on-failure
 
+  # ── Mailcatcher ───────────────────────────────────────────────────────────
   mailcatcher:
     image: dockage/mailcatcher:0.9.0
     volumes:
@@ -33,3 +71,5 @@ services:
         mode: host
     deploy:
       replicas: 1
+      restart_policy:
+        condition: on-failure

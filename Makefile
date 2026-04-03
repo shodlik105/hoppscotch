@@ -1,13 +1,68 @@
-STACK = hoppscotch
+STACK      = hoppscotch
+IMAGE      = hoppscotch/hoppscotch
+TAG        = password
+FULL_IMAGE = $(IMAGE):$(TAG)
+COMPOSE    = services/config.yaml
 
-.PHONY: postgres-up services-up migrates-up
+.PHONY: build services-up services-down migrate logs ps help
 
-postgres-up:
-	set -a && . ./.env && set +a && docker stack deploy -c databases/postgres-config.yaml $(STACK)
+## ── Build ─────────────────────────────────────────────────────────────────
+build:
+	docker build -f src/prod.Dockerfile --target aio -t $(FULL_IMAGE) src/
 
-services-up:
-	./scripts/gen-env-urls.sh
-	set -a && . ./.env && set +a && docker stack deploy -c databases/postgres-config.yaml -c services/config.yaml $(STACK)
+## ── Deploy ────────────────────────────────────────────────────────────────
+services-up: .env.urls
+	set -a && . ./.env && set +a && \
+	docker stack deploy -c $(COMPOSE) $(STACK)
 
-migrates-up:
-	set -a && . ./.env && set +a && docker stack deploy -c databases/postgres-config.yaml -c migrates/migrate-config.yaml $(STACK)
+services-down:
+	docker stack rm $(STACK)
+
+## ── Migration ─────────────────────────────────────────────────────────────
+migrate:
+	set -a && . ./.env && set +a && \
+	docker stack deploy -c $(COMPOSE) $(STACK)
+
+## ── Env URLs ──────────────────────────────────────────────────────────────
+.env.urls:
+	bash scripts/gen-env-urls.sh
+
+env-urls:
+	bash scripts/gen-env-urls.sh
+
+## ── Logs & Status ─────────────────────────────────────────────────────────
+logs:
+	docker service logs -f $(STACK)_hoppscotch
+
+logs-nginx:
+	docker service logs -f $(STACK)_nginx
+
+logs-backend:
+	docker service logs -f $(STACK)_hoppscotch 2>&1 | grep -i "backend\|nest\|error"
+
+ps:
+	docker stack ps $(STACK)
+
+## ── Restart services ──────────────────────────────────────────────────────
+restart:
+	docker service update --force $(STACK)_hoppscotch
+	docker service update --force $(STACK)_nginx
+
+restart-app:
+	docker service update --force $(STACK)_hoppscotch
+
+restart-nginx:
+	docker service update --force $(STACK)_nginx
+
+## ── Help ──────────────────────────────────────────────────────────────────
+help:
+	@echo ""
+	@echo "  make build          — Docker image qurish (src/ dan)"
+	@echo "  make services-up    — Swarm stack deploy qilish"
+	@echo "  make services-down  — Stackni o'chirish"
+	@echo "  make migrate        — DB migratsiya ishlatish"
+	@echo "  make logs           — Hoppscotch loglarini ko'rish"
+	@echo "  make ps             — Stack holatini ko'rish"
+	@echo "  make restart        — Hoppscotch + Nginx qayta ishlatish"
+	@echo "  make env-urls       — .env.urls ni qayta generatsiya qilish"
+	@echo ""

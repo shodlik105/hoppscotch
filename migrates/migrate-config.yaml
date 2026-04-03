@@ -1,7 +1,0 @@
-services:
-  migrate:
-    image: hoppscotch/hoppscotch
-    env_file: ../.env
-    command: sh -c "pnpm exec prisma migrate deploy"
-    deploy:
-      replicas: 1
