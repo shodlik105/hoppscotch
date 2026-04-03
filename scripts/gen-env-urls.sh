@@ -39,7 +39,7 @@ cat > .env.urls <<EOF
 # Avtomatik: scripts/gen-env-urls.sh — qo'lda tahrirlamang
 PUBLIC_URL=${BASE}
 ORIGIN=${ORIGIN}
-REDIRECT_URL=${BASE}
+REDIRECT_URL=${BASE}/
 NUXT_APP_BASE_URL=/${PATH_SEG}/
 VITE_BASE_URL=${BASE}
 VITE_SHORTCODE_BASE_URL=${BASE}
