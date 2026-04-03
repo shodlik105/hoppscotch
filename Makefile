@@ -8,7 +8,7 @@ COMPOSE    = services/config.yaml
 
 ## ── Build ─────────────────────────────────────────────────────────────────
 build:
-	docker build -f src/prod.Dockerfile --target aio -t $(FULL_IMAGE) src/
+	DOCKER_BUILDKIT=0 docker build -f src/prod.Dockerfile --target aio -t $(FULL_IMAGE) src/
 
 ## ── Deploy ────────────────────────────────────────────────────────────────
 services-up: .env.urls
