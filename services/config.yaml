@@ -30,6 +30,18 @@ services:
       restart_policy:
         condition: on-failure
 
+  # ── DB Migration (bir marta ishlab to'xtaydi) ────────────────────────────
+  migrate:
+    image: hoppscotch/hoppscotch:latest
+    env_file:
+      - ../.env
+      - ../.env.urls
+    command: sh -c "cd /dist/backend && npx prisma migrate deploy && echo 'Migration done'"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: none
+
   # ── Hoppscotch AIO ───────────────────────────────────────────────────────
   hoppscotch:
     image: hoppscotch/hoppscotch:latest
